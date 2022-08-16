@@ -1,25 +1,37 @@
 package application;
 
-import devices.ComboDevice;
-import devices.ConcretePrinter;
-import devices.ConcreteScanner;
-import javafx.scene.control.ComboBox;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import entities.Employee;
+
+/**
+ * Program
+ */
 public class Program {
+
     public static void main(String[] args) {
-        ConcretePrinter p = new ConcretePrinter("1080");
-        p.processDoc("My Letter");
-        p.print("My Letter");
+        List<Employee> list = new ArrayList<>();
+        String path = "/workspace/java-interfaces/temp/in.txt";
 
-        System.out.println();
-        ConcreteScanner s = new ConcreteScanner("2003");
-        s.processDoc("My Email");
-        System.out.println("Scan result: " + s.scan());
-
-        System.out.println();
-        ComboDevice c = new ComboDevice("2081");
-        c.processDoc("My Dissertation");
-        c.print("My Dissertation");
-        System.out.println("Scan result: " + c.scan());
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String employeeCSV = br.readLine();
+            while (employeeCSV != null){
+                String[] fields = employeeCSV.split(",");
+                list.add(new Employee(fields[0], Double.parseDouble(fields[1])));
+                employeeCSV = br.readLine();
+            }
+            Collections.sort(list);
+            for (Employee s : list) {
+                System.out.println(s.getName() + ", " + s.getSalary());
+            }
+        } catch (IOException e) {
+            //TODO: handle exception
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 }
